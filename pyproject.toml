@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "class-balancer"
+version = "0.1.0"
+description = "Local Hebrew RTL desktop app for assigning students into balanced classes."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "PySide6>=6.6",
+    "defusedxml>=0.7.1",
+    "keyring>=25.0",
+    "pydantic>=2",
+]
+
+[project.optional-dependencies]
+excel = ["openpyxl>=3.1", "pandas>=2.0"]
+fuzzy = ["rapidfuzz>=3.0"]
+optimization = ["ortools>=9.10"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+class-balancer = "class_balancer.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["class_balancer*"]
+
+[tool.setuptools.package-data]
+class_balancer = ["ui/qml/*.qml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["_backups"]
+
+[tool.coverage.run]
+source = ["class_balancer"]
+
+[tool.ruff]
+extend-exclude = ["_backups"]

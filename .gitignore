@@ -1,0 +1,15 @@
+.env
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+*.db
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+exports/
+tmp_profile/
+_backups/
+examples/

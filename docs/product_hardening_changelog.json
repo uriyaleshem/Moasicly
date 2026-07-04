@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-06-17T20:58:00+03:00",
+  "baseline": {
+    "backup_path": "D:\\classmaker\\_backups\\product-hardening-baseline-20260617-203109",
+    "git_branch": null,
+    "git_branch_note": "D:\\classmaker is not a Git repository.",
+    "commands": [
+      {
+        "command": "python -m pytest",
+        "status": "failed_then_fixed",
+        "note": "Workspace backup copy initially duplicated test module names. pytest is now scoped to tests in pyproject.toml."
+      },
+      {
+        "command": "python -m pytest tests",
+        "status": "passed",
+        "note": "9 passed at baseline; 17 passed after preflight tests were added."
+      },
+      {
+        "command": "python -m coverage run --source=class_balancer -m pytest tests && python -m coverage report",
+        "status": "passed",
+        "note": "Baseline app coverage 62%."
+      },
+      {
+        "command": "python -m ruff check class_balancer tests scripts",
+        "status": "failed_then_fixed",
+        "note": "4 baseline findings fixed; root ruff check now passes."
+      },
+      {
+        "command": "python -m bandit -r class_balancer tests scripts",
+        "status": "failed",
+        "note": "8 medium and 3 low findings at baseline."
+      },
+      {
+        "command": "python -m compileall -q class_balancer tests",
+        "status": "passed"
+      },
+      {
+        "command": "pyside6-qmllint class_balancer\\ui\\qml\\Main.qml",
+        "status": "warnings",
+        "note": "Mostly unqualified-access warnings in the monolithic Main.qml."
+      }
+    ]
+  },
+  "fixed_issues": [
+    {
+      "id": "P0-PREFLIGHT-001",
+      "title": "Critical preflight report blocks assignment saves",
+      "status": "fixed",
+      "files": [
+        "class_balancer/assignment_engine/preflight.py",
+        "class_balancer/assignment_engine/engine.py",
+        "class_balancer/services/assignment_service.py"
+      ]
+    },
+    {
+      "id": "P0-DOMAIN-001",
+      "title": "Removed empty-domain fallback to all classes",
+      "status": "fixed",
+      "files": [
+        "class_balancer/assignment_engine/engine.py"
+      ]
+    },
+    {
+      "id": "P0-LOCK-001",
+      "title": "Together groups with different locked classes are rejected",
+      "status": "fixed",
+      "files": [
+        "class_balancer/assignment_engine/preflight.py",
+        "class_balancer/assignment_engine/engine.py"
+      ]
+    },
+    {
+      "id": "P0-CAPACITY-001",
+      "title": "Hard capacity contradictions are rejected before solving",
+      "status": "fixed",
+      "files": [
+        "class_balancer/assignment_engine/preflight.py"
+      ]
+    },
+    {
+      "id": "P0-FRIENDSHIP-001",
+      "title": "Friendship-hard impossible requests produce structured critical issues",
+      "status": "fixed",
+      "files": [
+        "class_balancer/assignment_engine/preflight.py"
+      ]
+    },
+    {
+      "id": "P0-QA-001",
+      "title": "Root pytest, coverage and ruff commands are configured around local backups",
+      "status": "fixed",
+      "files": [
+        "pyproject.toml",
+        "class_balancer/ui/bridge.py",
+        "scripts/stress_assignment_trials.py"
+      ]
+    }
+  ],
+  "current_verification": [
+    {
+      "command": "python -m pytest",
+      "status": "passed",
+      "note": "17 passed."
+    },
+    {
+      "command": "python -m coverage run -m pytest && python -m coverage report",
+      "status": "passed",
+      "note": "Total application coverage 64%."
+    },
+    {
+      "command": "python -m ruff check .",
+      "status": "passed"
+    },
+    {
+      "command": "python -m compileall -q class_balancer tests",
+      "status": "passed"
+    },
+    {
+      "command": "python -m class_balancer --smoke",
+      "status": "passed"
+    },
+    {
+      "command": "python -m bandit -r class_balancer tests scripts",
+      "status": "failed",
+      "note": "8 medium and 3 low findings remain visible for later security hardening."
+    },
+    {
+      "command": "pyside6-qmllint class_balancer\\ui\\qml\\Main.qml",
+      "status": "warnings",
+      "note": "Existing unqualified-access warning profile remains."
+    }
+  ],
+  "known_limitations": [
+    "CP-SAT objective redesign is not complete.",
+    "Local search still needs targeted neighborhoods and delta scoring.",
+    "Manual move/swap preview APIs are not complete.",
+    "Database migrations, stable UUID identity and safe re-import are not complete.",
+    "AI secret storage still needs keychain-backed implementation.",
+    "Main.qml is still monolithic.",
+    "Real Windows display scaling screenshots still need manual capture."
+  ]
+}
