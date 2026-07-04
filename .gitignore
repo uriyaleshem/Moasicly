@@ -10,6 +10,8 @@ __pycache__/
 .mypy_cache/
 .coverage
 exports/
+build/
+dist/
 tmp_profile/
 _backups/
 examples/

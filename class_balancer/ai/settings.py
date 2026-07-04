@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -57,6 +58,8 @@ def user_env_path() -> Path:
 
 
 def project_env_path() -> Path:
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent / ".env"
     return Path.cwd() / ".env"
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 import tempfile
 from pathlib import Path
 
@@ -23,32 +24,20 @@ def run_gui(database_path: str | None = None) -> int:
     app.setApplicationDisplayName("Mosaicly")
     app.setLayoutDirection(Qt.RightToLeft)
     app.setFont(QFont("Segoe UI", 10))
-    project_root = Path(__file__).resolve().parent.parent
-    window_icon_path = next(
-        (
-            path
-            for path in (
-                project_root / "mosaiclyIcon.ico",
-                project_root / "moasiclyIcon.png",
-                project_root / "AppIcon.ico",
-                project_root / "AppIcon.png",
-            )
-            if path.exists()
-        ),
-        project_root / "mosaiclyIcon.ico",
+    resource_root = _resource_root()
+    window_icon_path = _first_existing(
+        resource_root / "mosaiclyIcon.ico",
+        resource_root / "moasiclyIcon.png",
+        resource_root / "AppIcon.ico",
+        resource_root / "AppIcon.png",
+        fallback=resource_root / "mosaiclyIcon.ico",
     )
-    app_icon_path = next(
-        (
-            path
-            for path in (
-                project_root / "moasiclyIcon.png",
-                project_root / "mosaiclyIcon.ico",
-                project_root / "AppIcon.png",
-                project_root / "AppIcon.ico",
-            )
-            if path.exists()
-        ),
-        window_icon_path,
+    app_icon_path = _first_existing(
+        resource_root / "moasiclyIcon.png",
+        resource_root / "mosaiclyIcon.ico",
+        resource_root / "AppIcon.png",
+        resource_root / "AppIcon.ico",
+        fallback=window_icon_path,
     )
     if window_icon_path.exists():
         app.setWindowIcon(QIcon(str(window_icon_path)))
@@ -65,11 +54,21 @@ def run_gui(database_path: str | None = None) -> int:
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("bridge", bridge)
     engine.rootContext().setContextProperty("appIconUrl", QUrl.fromLocalFile(str(app_icon_path)).toString() if app_icon_path.exists() else "")
-    qml_path = Path(__file__).parent / "ui" / "qml" / "Main.qml"
+    qml_path = resource_root / "class_balancer" / "ui" / "qml" / "Main.qml"
     engine.load(QUrl.fromLocalFile(str(qml_path)))
     if not engine.rootObjects():
         return 1
     return app.exec()
+
+
+def _resource_root() -> Path:
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        return Path(getattr(sys, "_MEIPASS")).resolve()
+    return Path(__file__).resolve().parent.parent
+
+
+def _first_existing(*paths: Path, fallback: Path) -> Path:
+    return next((path for path in paths if path.exists()), fallback)
 
 
 def run_smoke(database_path: str | None = None) -> dict[str, object]:

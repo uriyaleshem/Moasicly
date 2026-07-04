@@ -73,6 +73,22 @@ python -m class_balancer
 
 קובץ ההרצה `RUN_CLASSBALANCER.bat` מגדיר אוטומטית DB בתיקיית המשתמש אם לא הוגדר נתיב אחר.
 
+## בניית EXE
+
+ב־Windows אפשר לבנות קובץ הרצה עצמאי בשם `Moasicly.exe`:
+
+```powershell
+.\BUILD_EXE.ps1
+```
+
+הקובץ ייווצר כאן:
+
+```text
+dist\Moasicly.exe
+```
+
+אם רוצים להפעיל AI בגרסת ה־exe, שימו קובץ `.env` באותה תיקייה של `Moasicly.exe`.
+
 ## איפה שמים Token / API Key
 
 AI לא נדרש להרצת המערכת. השיבוץ עובד בלי טוקן.
@@ -89,6 +105,12 @@ AI לא נדרש להרצת המערכת. השיבוץ עובד בלי טוקן.
 
 ```text
 D:\classmaker\.env
+```
+
+בגרסת ה־exe אפשר גם לשים את הקובץ ליד:
+
+```text
+Moasicly.exe
 ```
 
 אפשר גם לערוך ידנית את `.env` לפי `.env.example`:

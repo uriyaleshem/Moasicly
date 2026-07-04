@@ -11,6 +11,7 @@ import unittest
 from pathlib import Path
 
 from class_balancer.ai import AiClient
+from class_balancer.ai import settings as ai_settings
 from class_balancer.ai.client import ACTION_SELECTION_SCHEMA
 from class_balancer.assignment_engine import PreflightError
 from class_balancer.ai.settings import _read_env_file, _write_provider_token
@@ -431,6 +432,21 @@ class HardeningRegressionTests(unittest.TestCase):
         values = _read_env_file(env_path)
         self.assertEqual(values["OPENAI_API_KEY"], "clean-token")
         self.assertNotIn("GEMINI_API_KEY", values)
+
+    def test_project_env_path_uses_exe_folder_when_frozen(self) -> None:
+        old_executable = ai_settings.sys.executable
+        had_frozen = hasattr(ai_settings.sys, "frozen")
+        old_frozen = getattr(ai_settings.sys, "frozen", None)
+        try:
+            ai_settings.sys.executable = str(self.root / "Moasicly.exe")
+            ai_settings.sys.frozen = True  # type: ignore[attr-defined]
+            self.assertEqual(ai_settings.project_env_path(), self.root / ".env")
+        finally:
+            ai_settings.sys.executable = old_executable
+            if had_frozen:
+                ai_settings.sys.frozen = old_frozen  # type: ignore[attr-defined]
+            else:
+                delattr(ai_settings.sys, "frozen")
 
     def test_provider_limit_is_honored(self) -> None:
         class SingleProviderClient(AiClient):
